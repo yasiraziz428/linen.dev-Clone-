@@ -9,14 +9,12 @@ io.on("connection", (socket) => {
     users[socket.id] = name;
     console.log(users);
   });
-
   socket.on("send", (message) => {
     socket.broadcast.emit("receive", {
       name: users[socket.id],
       message: message,
     });
   });
-
   socket.on("disconnect", (message) => {
     delete users[socket.id];
   });

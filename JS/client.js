@@ -10,10 +10,11 @@ function append(name, message) {
   messageElement.innerHTML = messageHTML;
   messageElement.classList.add("message");
   messageContainer.append(messageElement);
-  //   messageContainer.scrollTop = messageContainer.scrollHeight;
 }
 
 const userName = prompt("Enter your name to join chat");
+
+socket.emit("new-user-joined", userName);
 
 form.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -22,8 +23,6 @@ form.addEventListener("submit", (e) => {
   socket.emit("send", message);
   messageInput.value = "";
 });
-
-socket.emit("new-user-joined", userName);
 
 socket.on("receive", (data) => {
   append(data.name, data.message);
