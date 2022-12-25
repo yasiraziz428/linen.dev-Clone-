@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Linen Clone</title>
 
+    <!-- JS -->
+    <script type="module" src="/components/message.js"></script>
+
     <!-- Linking Clint with server -->
     <script defer src="http://localhost:8000/socket.io/socket.io.js"></script>
     <script defer src="JS/client.js"></script>
@@ -31,11 +34,10 @@
             Channels
           </button>
           <button
+            id="room-name"
             class="w-full text-start pl-5 mx-auto h-10 text-base hover:bg-gray-100"
-          >
-            #html
-          </button>
-          <button
+          ></button>
+          <!-- <button
             class="w-full text-start pl-5 mx-auto h-10 text-base hover:bg-gray-100"
           >
             #css
@@ -44,7 +46,7 @@
             class="w-full text-start pl-5 mx-auto h-10 text-base hover:bg-gray-100"
           >
             #js
-          </button>
+          </button> -->
         </div>
       </div>
 
@@ -100,7 +102,7 @@
         <!-- Input Message -->
         <form class="bottom-0 fixed w-full" action="#" id="send-form">
           <input
-            id="message-input"
+            id="message_input"
             name="message-input"
             class="shadow border rounded w-9/12 py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
             placeholder="Type a message.."
