@@ -1,27 +1,38 @@
-// node server which will handle socket io connections
+// socket server which will handle socket io connections
 
-const express = require("express");
 const io = require("socket.io")(8000);
 const users = [];
-
-const app = express();
+const messages = [];
 
 io.on("connection", (socket) => {
   socket.on("joinRoom", (userName, room) => {
+    // let index = users.indexOf
+    // delete users[]
     const user = userJoin(socket.id, userName, room);
+    // console.log(user.room);
     socket.join(user.room);
-    socket.emit("roomName", user.room);
-    socket.on("chatMessage", (msg) => {
-      const user = getCurrentUser(socket.id);
-      io.to(user.room).emit("message", msg);
+    socket.emit(
+      "initChat",
+      messages.filter((m) => m.room === user.room)
+    );
+    console.log(users);
+  });
+  socket.on("chatMessage", (msg, btnValue) => {
+    const user = getCurrentUser(socket.id);
+    const currentTime = new Date().toLocaleString();
+    console.log(user.room);
+    io.to(user.room).emit("message", user.username, msg, currentTime);
+    messages.push({
+      sender: user.username,
+      room: user.room,
+      date: currentTime,
+      message: msg,
     });
   });
   socket.on("disconnect", () => {
     delete users[socket.id];
   });
 });
-
-app.listen(3000);
 
 // user component
 
@@ -32,32 +43,12 @@ function userJoin(id, username, room) {
 }
 //get current user
 function getCurrentUser(id) {
+  users.reverse();
+  console.log(users);
   return users.find((user) => user.id === id);
 }
 
-//Get room users
+//get room users
 function getRoomUsers(room) {
   return users.filter((user) => user.room === room);
 }
-
-// socket.broadcast.to(user.room)
-
-// listen for a message to join specific room
-// socket.on("join-room", (room) => {
-//   socket.join(room);
-// });
-
-// socket.on("new-user-joined", (name) => {
-//   // console.log("New user", name);
-//   users[socket.id] = name;
-//   // console.log(users);
-// });
-// socket.on("send", (message) => {
-//   socket.broadcast.emit("receive", {
-//     name: users[socket.id],
-//     message: message,
-//   });
-// });
-// socket.on("disconnect", () => {
-//   delete users[socket.id];
-// });

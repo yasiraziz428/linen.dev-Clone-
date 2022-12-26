@@ -5,37 +5,69 @@ const form = document.getElementById("send-form");
 const messageInput = document.getElementById("message-input");
 const messageContainer = document.querySelector(".container");
 const roomName = document.getElementById("room-name");
+const skillsDiv = document.getElementById("skills");
+const skillBtns = document.querySelectorAll(".skill-btn");
+const msgDiv = document.getElementById("message-div");
+const skillHeading = document.getElementById("skill-heading");
 
+form.style.display = "none";
 const userName = prompt("Enter name");
-const room = prompt("Enter room");
+// const room = prompt("Enter chat");
 
-socket.emit("joinRoom", userName, room);
+//join chat when user clicks the chat btn
+skillBtns.forEach((element) => {
+  element.addEventListener("click", () => {
+    msgDiv.innerHTML = " ";
+    skillHeading.innerText = element.innerText;
+    console.log(element);
+    const room = element.innerText;
+    localStorage.setItem("room", room);
+
+    socket.emit("joinRoom", userName, room);
+    form.style.display = "block";
+  });
+});
 
 form.addEventListener("submit", (e) => {
   e.preventDefault();
   const msg = e.target.elements.message_input.value;
-
+  let btnValue = localStorage.getItem("room");
+  console.log(btnValue);
   // Emit message to server
-  socket.emit("chatMessage", msg);
+  socket.emit("chatMessage", msg, btnValue);
 });
-socket.on("message", (msg) => {
-  append("user", msg);
-});
-
-socket.on("roomName", (room) => {
-  outputRoomName(room);
+socket.on("message", (sender, msg, date) => {
+  appendMessage(sender, msg, date);
 });
 
-//Add room name to DOM
-function outputRoomName(room) {
-  roomName.innerText = room;
-}
+// getting previous msgs to new users
+socket.on("initChat", (msgs) => {
+  msgs.forEach((element) => {
+    console.log(element);
+    appendMessage(element.sender, element.message, element.date);
+  });
+});
 
-function append(name, message) {
-  const messageHTML = `<div class="flex hover:bg-gray-100 w-full py-3 pl-3"><div><img src="/images/user-img.png" class="w-10" /></div><div class="ml-3"><span class="font-semibold">${name}</span><p>${message}</p></div></div>`;
+function appendMessage(name, message, date) {
+  const messageHTML = `<div class="flex hover:bg-gray-100 w-full py-3 pl-3"><div><img src="/images/user-img.png" class="w-10" /></div><div class="ml-3"><span class="font-semibold">${name}</span><span class="text-sm ml-2">${date}</span><p>${message}</p></div></div>`;
   // const messageHTML = getMessageHTML(name, message);
   const messageElement = document.createElement("div");
   messageElement.innerHTML = messageHTML;
   messageElement.classList.add("message");
   messageContainer.append(messageElement);
+}
+
+function appendRoom(name) {
+  const newBtn = document.createElement("button");
+  newBtn.classList.add(
+    "w-full",
+    "text-start",
+    "pl-5",
+    "mx-auto",
+    "h-10",
+    "text-base",
+    "hover:bg-gray-100"
+  );
+  newBtn.innerHTML = name;
+  skillsDiv.append(newBtn);
 }
