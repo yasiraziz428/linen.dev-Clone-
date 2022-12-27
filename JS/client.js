@@ -9,33 +9,41 @@ const skillsDiv = document.getElementById("skills");
 const skillBtns = document.querySelectorAll(".skill-btn");
 const msgDiv = document.getElementById("message-div");
 const skillHeading = document.getElementById("skill-heading");
-
 form.style.display = "none";
+
 const userName = prompt("Enter name");
-// const room = prompt("Enter chat");
 
 //join chat when user clicks the chat btn
 skillBtns.forEach((element) => {
   element.addEventListener("click", () => {
+    const currRoom = sessionStorage.getItem("room");
+    // leave prev room when user joins new chat
+    if (currRoom) {
+      socket.emit("leaveRoom", currRoom);
+      console.log("left room", currRoom);
+    }
     msgDiv.innerHTML = " ";
     skillHeading.innerText = element.innerText;
-    console.log(element);
     const room = element.innerText;
-    localStorage.setItem("room", room);
-
+    // assigning room value to room in storage
+    sessionStorage.setItem("room", room);
     socket.emit("joinRoom", userName, room);
+    console.log("user joins room:", room);
     form.style.display = "block";
   });
 });
 
+// listening to form
+
 form.addEventListener("submit", (e) => {
   e.preventDefault();
   const msg = e.target.elements.message_input.value;
-  let btnValue = localStorage.getItem("room");
-  console.log(btnValue);
+  let btnValue = sessionStorage.getItem("room");
+  console.log("user sent msg on room:", btnValue);
   // Emit message to server
   socket.emit("chatMessage", msg, btnValue);
 });
+
 socket.on("message", (sender, msg, date) => {
   appendMessage(sender, msg, date);
 });
@@ -43,7 +51,7 @@ socket.on("message", (sender, msg, date) => {
 // getting previous msgs to new users
 socket.on("initChat", (msgs) => {
   msgs.forEach((element) => {
-    console.log(element);
+    // console.log(element);
     appendMessage(element.sender, element.message, element.date);
   });
 });

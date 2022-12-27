@@ -17,14 +17,17 @@ io.on("connection", (socket) => {
     );
     console.log(users);
   });
-  socket.on("chatMessage", (msg, btnValue) => {
+  socket.on("leaveRoom", (room) => {
+    socket.leave(room);
+    removeUser(socket.id, room);
+  });
+  socket.on("chatMessage", (msg, room) => {
     const user = getCurrentUser(socket.id);
     const currentTime = new Date().toLocaleString();
-    console.log(user.room);
-    io.to(user.room).emit("message", user.username, msg, currentTime);
+    io.to(room).emit("message", user.username, msg, currentTime);
     messages.push({
       sender: user.username,
-      room: user.room,
+      room: room,
       date: currentTime,
       message: msg,
     });
@@ -51,4 +54,14 @@ function getCurrentUser(id) {
 //get room users
 function getRoomUsers(room) {
   return users.filter((user) => user.room === room);
+}
+
+// remove user
+
+function removeUser(id, room) {
+  const index = users.findIndex((user) => user.id == id && user.room == room);
+  if (index != -1) {
+    users.splice(index, 1);
+    console.log(users);
+  }
 }
