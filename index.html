@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Linen Clone</title>
 
+    <!-- JS -->
+    <script type="module" src="/components/message.js"></script>
+
     <!-- Linking Clint with server -->
     <script defer src="http://localhost:8000/socket.io/socket.io.js"></script>
     <script defer src="JS/client.js"></script>
@@ -31,32 +34,38 @@
             Channels
           </button>
           <button
-            class="w-full text-start pl-5 mx-auto h-10 text-base hover:bg-gray-100"
+            id="room-name"
+            class="skill-btn w-full text-start pl-5 mx-auto h-10 text-base hover:bg-gray-100"
           >
-            #html
+            html
           </button>
           <button
-            class="w-full text-start pl-5 mx-auto h-10 text-base hover:bg-gray-100"
+            class="skill-btn w-full text-start pl-5 mx-auto h-10 text-base hover:bg-gray-100"
           >
-            #css
+            css
           </button>
           <button
-            class="w-full text-start pl-5 mx-auto h-10 text-base hover:bg-gray-100"
+            class="skill-btn w-full text-start pl-5 mx-auto h-10 text-base hover:bg-gray-100"
           >
-            #js
+            js
           </button>
         </div>
       </div>
 
       <!-- Messaging Section -->
       <div class="w-11/12">
-        <div class="container mt-1">
+        <div
+          id="skill-heading"
+          class="h-14 border-b-2 text-base w-full p-4 font-semibold"
+        ></div>
+        <div id="message-div" class="container mt-1">
           <!-- <div class="flex hover:bg-gray-100 w-full py-3 pl-3">
             <div>
               <img src="/images/user-img.png" class="w-10" />
             </div>
             <div class="ml-3">
               <span class="font-semibold">username</span>
+              <span class="text-sm ml-2">01/12/2022</span>
               <p>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras
                 dignissim odio lacus, ac porta eros volutpat quis. Vivamus
@@ -100,7 +109,7 @@
         <!-- Input Message -->
         <form class="bottom-0 fixed w-full" action="#" id="send-form">
           <input
-            id="message-input"
+            id="message_input"
             name="message-input"
             class="shadow border rounded w-9/12 py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
             placeholder="Type a message.."
